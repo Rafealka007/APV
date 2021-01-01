@@ -1,0 +1,40 @@
+{extends layout.latte}
+
+{block title}
+	Persons list
+{/block}
+
+{block body}
+	<div class="container md-5">
+		<form action="{link search}" method="get">
+			<label>Search:</label>
+			<input type="text" name="q" class="form-control">
+			<br>
+			<button type="submit" class="btn btn-primary">
+				Search
+			</button>
+		</form>
+
+		<a href="{link newPerson}" class="btn btn-success">
+			<span class="fa fa-angry"></span> Add new person
+		</a>
+
+		<table class="table table-hover table-striped">
+			<tr>
+				<th>First name</th>
+				<th>Last name</th>
+				<th>Height</th>
+				<th>Gender</th>
+			</tr>
+			{foreach $persons_list as $p}
+				<tr> 
+					<td>{$p['first_name']}</td>
+					<td>{$p['last_name']}</td>
+					<td>{$p['height']}</td>
+					<td>{$p['gender']}</td>
+				</tr>
+			{/foreach}
+		</table>
+	</div>
+
+{/block}
