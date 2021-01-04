@@ -1,0 +1,53 @@
+{extends layout.latte}
+
+{block title}New meeting{/block}
+
+{block body}
+    <div class="container">
+        <h3 class="text-center pb-4 pt-3">New meeting</h3>
+
+        <form action="{link newMeeting}" method="post">
+            <div class="form-row justify-content-center">
+                <div class="col-sm-3 form-group">
+                    <label for="start">Date</label>
+                    <input class="form-control" type="date" name="start" placeholder="Start" required>
+                </div>
+                <div class="col-sm-3 form-group">
+                    <label for="scroll">Location</label>
+                    <select class="form-control" id="scroll">
+                        {foreach $location_list as $l}
+                            <option value={$l['id_location']}><span>{$l['city']}</span><span>, </span><span>{$l['street_name']}</span><span> </span><span>{$l['street_number']}</span></option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row justify-content-center">
+                <div class="col-sm-3 form-group">
+                    <label for="description">Description</label>
+                    <input class="form-control" type="text" name="decription" placeholder="Description" required>
+                </div>
+                <div class="col-sm-3 form-group">
+                    <label for="duration">Duration</label>
+                    <input class="form-control" type="time" name="duration" placeholder="Duration">
+                </div>
+            </div>
+            <div class="form-row justify-content-center">
+                <div class="col-5 form-group">
+                    <label for="people">Attending people (multiple choice)</label>
+                    <select name="people" id="people" class="certain-w" multiple>
+                        {foreach $location_list as $l}
+                            <option value={$l['id_person']}><span>{$l['first_name']}</span><span> </span><span>{$l['last_name']}</span></option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+            <br>
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">
+                    <span class="fa fa-plus"></span> Add new meeting
+                </button>
+            </div>
+        </form>
+    </div>
+{/block}

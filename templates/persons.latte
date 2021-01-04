@@ -5,26 +5,29 @@
 {/block}
 
 {block body}
-	<div class="container md-5">
-		<form action="{link search}" method="get">
+	<div class="container">
+		<!--<form action="{link search}" method="get">
 			<label>Search:</label>
 			<input type="text" name="q" class="form-control">
 			<br>
 			<button type="submit" class="btn btn-primary">
 				Search
 			</button>
-		</form>
+		</form>-->
 
 		<a href="{link newPerson}" class="btn btn-success">
 			<span class="fa fa-angry"></span> Add new person
 		</a>
-
+		<div>
 		<table class="table table-hover table-striped">
 			<tr>
 				<th>First name</th>
 				<th>Last name</th>
 				<th>Height</th>
 				<th>Gender</th>
+				<th class="text-center">View info</th>
+				<th class="text-center">Edit</th>
+				<th class="text-center">Remove</th>
 			</tr>
 			{foreach $persons_list as $p}
 				<tr> 
@@ -33,23 +36,32 @@
 					<td>{$p['height']}</td>
 					<td>{$p['gender']}</td>
 					<td class="text-center">
+						<a href="{link infoPerson}?id_person={$p['id_person']}">
+							<button class="btn-sm btn-secondary">
+								<span class="material-icons">person_search</span>
+							</button>
+						</a>
+					</td>
+					<td class="text-center">
 						<a href="{link updatePerson}?id_person={$p['id_person']}">
 							<button class="btn-sm btn-primary">
-								<span class="fa fa-edit"></span> Edit
+								<span class="material-icons">border_color</span>
 							</button>
 						</a>
 					</td>
 					<td class="text-center">
 						<form method="post" onsubmit="return confirmDelete({$p['first_name']} + ' ' + {$p['last_name']})" action="{link person_delete}?id_person={$p['id_person']}">
 							<button class="btn-sm btn-danger">
-								<span class="fa fa-trash"></span> Delete
+								<span class="material-icons">delete_outline</span>
 							</button>
 						</form>
 					</td>
 				</tr>
 			{/foreach}
 		</table>
+		</div>
 	</div>
+
 	<script type="text/javascript">
 		function confirmDelete(name) {
 			return confirm('Do you really want to delete ' + name + '?');
