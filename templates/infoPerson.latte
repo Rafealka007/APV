@@ -5,7 +5,111 @@
 {/block}
 
 {block body}
-    <div class="container">
-        test
+    <div class="container text-center">
+
+        <h2 class="m-3">Contact information</h2>
+
+
+        <div class="d-flex justify-content-center">
+            <div class="border w-50 shadow pb-2">
+                <div class="border background">
+                    <h3 class="pb-2 pt-2">Personal info</h3>
+                </div>
+                <div class="container row justify-content-center p-0 m-0">
+                    <div class="col row text-left justify-content-center">
+                        <div class="col-5 pt-2 pb-2"><span>Name and surname</span></div>
+                        <div class="col-6 pt-2 pb-2"><span>{$person[0]['first_name']}</span><span> </span><span>{$person[0]['last_name']}</span></div>
+                    </div>
+                </div>
+                    <div class="container row justify-content-center p-0 m-0">
+                        <div class="col row text-left justify-content-center">
+                            <div class="col-5 pt-2 pb-2"><span>Nickname</span></div>
+                            <div class="col-6 pt-2 pb-2"><span>{$person[0]['nickname']}</span></div>
+                        </div>
+                    </div>
+                <div class="container row justify-content-center p-0 m-0">
+                    <div class="col row text-left justify-content-center">
+                        <div class="col-5 pt-2 pb-2"><span>Gender</span></div>
+                        <div class="col-6 pt-2 pb-2"><span>{$person[0]['gender']}</span></div>
+                    </div>
+                </div>
+                <div class="container row justify-content-center p-0 m-0">
+                    <div class="col row text-left justify-content-center">
+                        <div class="col-5 pt-2 pb-2"><span>Height</span></div>
+                        <div class="col-6 pt-2 pb-2"><span>{$person[0]['height']}</span></div>
+                    </div>
+                </div>
+                <div class="container row justify-content-center p-0 m-0">
+                    <div class="col row text-left justify-content-center">
+                        <div class="col-5 pt-2 pb-2"><span>Date of birth</span></div>
+                        <div class="col-6 pt-2 pb-2"><span>{$person[0]['birth_day']}</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="d-flex justify-content-center pt-4">
+            <div class="border w-50 shadow pb-2">
+                <div class="border background">
+            <h3 class="pb-2 pt-2">Address</h3>
+                </div>
+            <div class="container row justify-content-center p-0 m-0">
+                <div class="col row text-left">
+                    <div class="col-5 pt-2 pb-2"><span>Address</span></div>
+                    <div class="col-6 pt-2 pb-2"><span>{$person[0]['city']}</span><span>, </span><span>{$person[0]['street_name']}</span><span> </span><span>{$person[0]['street_number']}</span></div>
+                </div>
+            </div>
+            <div class="container row justify-content-center p-0 m-0">
+                <div class="col row text-left">
+                    <div class="col-5 pt-2 pb-2"><span>&nbsp;</span></div>
+                    <div class="col-6 pt-2 pb-2"><span>{$person[0]['zip']}</span></div>
+                </div>
+            </div>
+            <div class="container row justify-content-center p-0 m-0">
+                <div class="col row text-left">
+                    <div class="col-5 pt-2 pb-2"><span></span>&nbsp;</div>
+                    <div class="col-6 pt-2 pb-2"><span>{$person[0]['country']}</span></div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <div class="d-flex justify-content-center pt-4">
+            <div class="border w-50 shadow pb-2">
+                <div class="border background">
+            <h3 class="pb-2 pt-2">Contact</h3>
+                </div>
+            <div class="container row justify-content-center p-0 m-0">
+                <div class="col row text-left">
+                    {foreach $contact as $c}
+                    <div class="col-5 pt-2 pb-2"><span>{$c['name']}</span></div>
+                    <div class="col-6 pt-2 pb-2"><span>{$c['contact']}</span></div>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+        </div>
+
+
+
+        <!--TODO-->
+        <div class="d-flex justify-content-center pt-4 mb-5">
+            <div class="border w-50 shadow pb-2">
+                <div class="border background">
+            <h3 class="pb-2 pt-2">Relations</h3>
+                </div>
+            <div class="container row justify-content-center p-0 m-0">
+                <div class="col row text-left">
+                    {foreach $contact as $c}
+                        <div class="col-5  pt-2 pb-2"><span>{$c['name']}</span></div>
+                        <div class="col-6  pt-2 pb-2"><span>{$c['contact']}</span></div>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+        </div>
+
+
     </div>
 {/block}

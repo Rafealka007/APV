@@ -185,8 +185,31 @@ $app->post('/persons/delete', function (Request $request, Response $response, $a
 
 
 $app->get('/person/info', function (Request $request, Response $response, $args) {
-    $stmt = $this->db->query('SELECT * FROM person');
-    $tplVars['person_list'] = $stmt->fetchall();
+    $id_person = $request->getQueryParam('id_person');
+    if (!empty($id_person)) {
+        try {
+            $stmt = $this->db->prepare('SELECT DISTINCT * FROM person INNER JOIN location USING (id_location)
+                                        INNER JOIN contact USING (id_person)
+                                        INNER JOIN contact_type USING (id_contact_type)
+                                        INNER JOIN relation ON (person.id_person = relation.id_person1)
+                                        INNER JOIN relation_type USING (id_relation_type)
+                                        WHERE id_person = :id_person');
+            $stmt->bindValue(':id_person', $id_person);
+            $stmt->execute();
+            $tplVars['person'] = $stmt->fetchall();
+            $stmt = $this->db->prepare('SELECT DISTINCT * FROM person INNER JOIN contact USING (id_person)
+                                        INNER JOIN contact_type USING (id_contact_type) WHERE id_person = :id_person');
+            $stmt->bindValue(':id_person', $id_person);
+            $stmt->execute();
+            $tplVars['contact'] = $stmt->fetchall();
+        } catch (PDOexception $e) {
+            $this->logger->error($e->getMessage());
+            exit('error occured');
+        }
+    } else {
+        exit('is person is missing');
+    }
+
     return $this->view->render($response, 'infoPerson.latte', $tplVars);
 
 })->setName("infoPerson");

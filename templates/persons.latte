@@ -6,53 +6,65 @@
 
 {block body}
 	<div class="container">
-		<!--<form action="{link search}" method="get">
-			<label>Search:</label>
-			<input type="text" name="q" class="form-control">
-			<br>
-			<button type="submit" class="btn btn-primary">
-				Search
-			</button>
-		</form>-->
+	<div>
+		<div class="row text-center pt-4 pb-4 justify-content-between">
+			<div class="col-5 m-0">
+				<form action="{link search}" method="get">
+					<div class="input-group">
+						<form action="{link search}" method="get">
+							<input type="text" class="form-control form-control-lg my-button" name="q" placeholder="Search...">
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary p-0 pr-2 pl-2 h-100 d-flex justify-content-center text-center align-items-center my-button" type="submit"><span class="material-icons">forward</span></button>
+							</div>
+						</form>
+					</div>
+			</div>
+			<div class="col-4 text-right m-0">
+				<a href="{link newPerson}" class="btn btn-success btn-lg my-button">
+					<div class="h-100 d-flex justify-content-center text-center align-items-center">Add person<span class="material-icons pl-2">add_circle_outline</span>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
 
-		<a href="{link newPerson}" class="btn btn-success">
-			<span class="fa fa-angry"></span> Add new person
-		</a>
-		<div>
+
+
+
 		<table class="table table-hover table-striped">
 			<tr>
 				<th>First name</th>
 				<th>Last name</th>
-				<th>Height</th>
-				<th>Gender</th>
+				<th class="text-center">Height</th>
+				<th class="text-center">Gender</th>
 				<th class="text-center">View info</th>
 				<th class="text-center">Edit</th>
 				<th class="text-center">Remove</th>
 			</tr>
 			{foreach $persons_list as $p}
 				<tr> 
-					<td>{$p['first_name']}</td>
-					<td>{$p['last_name']}</td>
-					<td>{$p['height']}</td>
-					<td>{$p['gender']}</td>
+					<td class="text-left">{$p['first_name']}</td>
+					<td class="text-left">{$p['last_name']}</td>
+					<td class="text-center">{$p['height']}</td>
+					<td class="text-center">{$p['gender']}</td>
 					<td class="text-center">
 						<a href="{link infoPerson}?id_person={$p['id_person']}">
 							<button class="btn-sm btn-secondary">
-								<span class="material-icons">person_search</span>
+								<span class="material-icons d-flex justify-content-center text-center align-items-center">person_search</span>
 							</button>
 						</a>
 					</td>
 					<td class="text-center">
 						<a href="{link updatePerson}?id_person={$p['id_person']}">
 							<button class="btn-sm btn-primary">
-								<span class="material-icons">border_color</span>
+								<span class="material-icons d-flex justify-content-center text-center align-items-center">border_color</span>
 							</button>
 						</a>
 					</td>
 					<td class="text-center">
 						<form method="post" onsubmit="return confirmDelete({$p['first_name']} + ' ' + {$p['last_name']})" action="{link person_delete}?id_person={$p['id_person']}">
 							<button class="btn-sm btn-danger">
-								<span class="material-icons">delete_outline</span>
+								<span class="material-icons d-flex justify-content-center text-center align-items-center">delete_outline</span>
 							</button>
 						</form>
 					</td>

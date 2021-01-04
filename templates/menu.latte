@@ -1,26 +1,17 @@
 {block menu}
-		<!--
-		<nav>
-		<ul>
-			<li><a href="{$basePath}">Home</a></li>
-			<li><a href="{$basePath}/persons">Persons list</a></li>
-			<li><a href="{$basePath}/location">Locations</a></li>
-		</ul>
-	</nav>
--->
-	<nav class="navbar navbar-expand-lg navbar-light bg-light nav-fill sticky-top w-100 m-0">
+	<nav class="navbar navbar-expand-lg nav-fill sticky-top w-100 m-0 p-0">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-			<ul class="navbar-nav">
-				<li class="nav-item active">
+			<ul class="navbar-nav p-0 m-0 better-nav">
+				<li class="nav-item better-nav p-3 text-white">
 					<a class="nav-link" href="{$basePath}">Home</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="{$basePath}/persons">Persons list</a>
+				<li class="nav-item better-nav p-3">
+					<a class="nav-link" href="{$basePath}/persons">Person list</a>
 				</li>
-				<li class="nav-item">
+				<li class="nav-item better-nav p-3">
 					<a class="nav-link" href="{$basePath}/meetings">Meetings</a>
 				</li>
 			</ul>
