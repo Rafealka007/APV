@@ -23,7 +23,8 @@
                 <tr>
                     <th>Event date</th>
                     <th>Description</th>
-                    <th>ID of event</th>
+                    <th class="text-center">ID of event</th>
+                    <th class="text-center">View</th>
                     <th class="text-center">Edit</th>
                     <th class="text-center">Remove</th>
                 </tr>
@@ -31,28 +32,28 @@
                     <tr>
                         <td>{$m['start']}</td>
                         <td>{$m['description']}</td>
-                        <td>{$m['id_meeting']}</td>
+                        <td class="text-center">{$m['id_meeting']}</td>
                         <td class="text-center">
                             <a href="">
                                 <button class="btn-sm btn-secondary">
                                     <span class="material-icons">person_search</span>
                                 </button>
                             </a>
-                        </td><!--
+                        </td>
                         <td class="text-center">
-                            <a href="{*link updateMeeting*}?id_person={*$m['id_meeting']*}">
+                            <a href="{link updateMeeting}?id_person={$m['id_meeting']}">
                                 <button class="btn-sm btn-primary">
                                     <span class="material-icons">border_color</span>
                                 </button>
                             </a>
                         </td>
                         <td class="text-center">
-                            <form method="post" onsubmit="return confirmDelete({*$m['id_meeting']*})" action="{*link meeting_delete*}?id_person={*$m['id_meeting']*}">
+                            <form method="post" onsubmit="return confirmDelete({$m['id_meeting']})" action="{link meeting_delete}?id_person={$m['id_meeting']}">
                                 <button class="btn-sm btn-danger">
                                     <span class="material-icons">delete_outline</span>
                                 </button>
                             </form>
-                        </td>-->
+                        </td>
                     </tr>
                 {/foreach}
             </table>
