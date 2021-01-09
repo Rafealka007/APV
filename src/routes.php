@@ -62,7 +62,6 @@ $app->post('/person', function (Request $request, Response $response, $args) {
                 || !empty($formData["city"]) || !empty($formData["zip"])){
                 $id_location = newLocation($this, $formData);
             }
-
             $stmt = $this->db->prepare("INSERT INTO person (nickname, first_name, last_name, id_location, birth_day, height, gender) VALUES (:nickname, :first_name, :last_name, :id_location, :birth_day, :height, :gender)");
             $stmt->bindValue(':nickname', $formData['nickname']);
             $stmt->bindValue(':first_name', $formData['first_name']);
@@ -72,7 +71,6 @@ $app->post('/person', function (Request $request, Response $response, $args) {
             $stmt->bindValue(':birth_day', empty($formData['birth_day']) ? null : $formData['birth_day']);
             $stmt->bindValue(':height', empty($formData['height']) ? null : $formData['height']);
             $stmt->execute();
-            $tplVars['message'] = 'Person succefully added';
             $this->db->commit();
         } catch (PDOexception $e) {
             $tplVars['message'] = 'Error occured, sorry jako';
@@ -89,16 +87,20 @@ $app->post('/person', function (Request $request, Response $response, $args) {
 /* person update nacteni formulare */
 $app->get('/person/update', function (Request $request, Response $response, $args) {
     $params = $request->getQueryParams();
+    $id_person = $request->getQueryParam('id_person');
     if (! empty($params["id_person"])){
+        print_r($params["id_person"]);
+        print_r($id_person);
         $stmt = $this->db->prepare("SELECT * FROM person
 									LEFT JOIN location USING (id_location)
 									WHERE id_person = :id_person");
-        $stmt->bindValue(":id_person", $params["id_person"]);
+        $stmt->bindValue(":id_person", $id_person);
         $stmt->execute();
         $tplVars["formData"] = $stmt->fetch();
         if (empty($tplVars["formData"])){
             exit("person not found");
         } else {
+            print_r($tplVars["formData"]);
             return $this->view->render($response, 'updatePerson.latte', $tplVars);
         }
     }
@@ -161,7 +163,7 @@ $app->post("/person/update", function (Request $request, Response $response, $ar
 
 
 /* delete osob */
-$app->post('/persons/delete', function (Request $request, Response $response, $args) {
+$app->post('/person/delete', function (Request $request, Response $response, $args) {
     $id_person = $request->getQueryParam('id_person');
     if (!empty($id_person)) {
         try {
@@ -179,7 +181,7 @@ $app->post('/persons/delete', function (Request $request, Response $response, $a
     return $response->withRedirect($basePath."/persons");
 })->setName('person_delete');
 
-
+/*PERSON INFO*/
 $app->get('/person/info', function (Request $request, Response $response, $args) {
     $id_person = $request->getQueryParam('id_person');
     if (!empty($id_person)) {
@@ -227,30 +229,103 @@ $app->get('/person/info', function (Request $request, Response $response, $args)
 })->setName("infoPerson");
 
 
-$app->get('/persons/addR', function (Request $request, Response $response, $args) {
-    $id_person = $request->getQueryParam('id_person');
+
+/*RELATIONS ADD Nacteni formulare*/
+$app->get('/person/addRelation', function (Request $request, Response $response, $args) {
+    $stmt = $this->db->prepare("SELECT * FROM person ORDER BY first_name");
+    $stmt->execute();
+    $tplVars["person"] = $stmt->fetchall();
+    $stmt = $this->db->prepare("SELECT * FROM relation_type");
+    $stmt->execute();
+    $tplVars["relation"] = $stmt->fetchall();
+    return $this->view->render($response, 'addRelation.latte', $tplVars);
+})->setName("addRelation");
+
+/*RELATIONS ADD Insert*/
+$app->post('/person/addRelation', function (Request $request, Response $response, $args) {
     $formData = $request->getParsedBody();
+    $id_person = $request->getQueryParam('id_person');
     print_r($formData);
     if (!empty($id_person)) {
         try {
-            $stmt = $this->db->prepare('INSERT INTO relation (id_person1, id_person2, description, id_relation_type) VALUES ($id_person, :id_person2, :description, :id_relation_type)');
+            $stmt = $this->db->prepare('INSERT INTO relation (id_person1, id_person2, description, id_relation_type) VALUES (:id_person1, :id_person2, :description, :id_relation_type)');
             $stmt->bindValue(':id_person1', $id_person);
             $stmt->bindValue(':id_person2', $formData['id_person2']);
-            $stmt->bindValue(':description', $formData['decsription']);
+            $stmt->bindValue(':description', $formData['description']);
             $stmt->bindValue(':id_relation_type', $formData['id_relation_type']);
+            $stmt->execute();
+            print_r($stmt);
+        } catch (PDOexception $e) {
+            $this->logger->error($e->getMessage());
+            exit($id_person);
+        }
+    } else {
+        exit('Error in id_person');
+    }
+    $basePath = $request->getUri()->getBasePath();
+    return $response->withRedirect($basePath."/persons");
+})->setName('addRelation');
+
+
+/*RELATIONS REMOVE nacteni form*/
+$app->get('/person/remRelation', function (Request $request, Response $response, $args) {
+    $id_person = $request->getQueryParam('id_person');
+    if (!empty($id_person)) {
+        try {
+            /*$stmt = $this->db->prepare('SELECT DISTINCT * FROM person INNER JOIN location USING (id_location)
+                                        WHERE id_person = :id_person');
+            $stmt->bindValue(':id_person', $id_person);
+            $stmt->execute();
+            $tplVars['person'] = $stmt->fetchall();*/
+
+
+            $stmt = $this->db->prepare('SELECT DISTINCT id_person as my_id,person.first_name as my_name, person.last_name as my_name_2,name, friend_first_name, friend_last_name,description FROM person 
+                                        INNER JOIN relation ON (person.id_person = relation.id_person1)
+                                        INNER JOIN relation_type USING (id_relation_type)
+                                        INNER JOIN (SELECT DISTINCT id_person AS friend_id, first_name AS friend_first_name, last_name AS friend_last_name FROM person) AS friend ON (id_person2 = friend.friend_id)
+                                        WHERE id_person = :id_person');
+            $stmt->bindValue(':id_person', $id_person);
+            $stmt->execute();
+            $tplVars['relation'] = $stmt->fetchall();
+
+            $stmt = $this->db->prepare('SELECT DISTINCT id_person as my_id,person.first_name as my_name, person.last_name as my_name_2, name, friend_first_name, friend_last_name,description FROM person 
+                                        INNER JOIN relation ON (person.id_person = relation.id_person2)
+                                        INNER JOIN relation_type USING (id_relation_type)
+                                        INNER JOIN (SELECT DISTINCT id_person AS friend_id, first_name AS friend_first_name, last_name AS friend_last_name FROM person) AS friend ON (id_person1 = friend.friend_id)
+                                        WHERE id_person = :id_person');
+            $stmt->bindValue(':id_person', $id_person);
+            $stmt->execute();
+            $tplVars['relation2'] = $stmt->fetchall();
+
+
+        } catch (PDOexception $e) {
+            $this->logger->error($e->getMessage());
+            exit('error occured');
+        }
+    } else {
+        exit('person is missing');
+    }
+    return $this->view->render($response, 'removeRelation.latte', $tplVars);
+})->setName("removeRelation");
+
+/* delete relations */
+$app->post('/person/removeRelations', function (Request $request, Response $response, $args) {
+    $id_person = $request->getQueryParam('id_person2');
+    if (!empty($id_person)) {
+        try {
+            $stmt = $this->db->prepare('DELETE FROM relations WHERE id_person2 = :id_person');
+            $stmt->bindValue(':id_person', $id_person);
             $stmt->execute();
         } catch (PDOexception $e) {
             $this->logger->error($e->getMessage());
-
-            exit($id_person);
+            exit('error occured');
         }
     } else {
         exit('person is missing');
     }
     $basePath = $request->getUri()->getBasePath();
     return $response->withRedirect($basePath."/persons");
-})->setName('addRelation');
-
+});
 
 
 
@@ -323,10 +398,7 @@ $app->get('/meeting', function (Request $request, Response $response, $args) {
 $app->post('/meeting', function (Request $request, Response $response, $args) {
     $formData = $request->getParsedBody();
     $tplVars = [];
-    if (empty($formData['start']) || empty($formData['description'])) {
-        $tplVars['message'] = 'Please fill required fields';
-        exit($formData['start']."nebo".$formData['description']);
-    } else {
+
         try {
             $this->db->beginTransaction();
             $stmt = $this->db->prepare("INSERT INTO meeting (start, decsription, duration, id_location) VALUES (:start, :description, :duration, :id_location)");
@@ -344,7 +416,7 @@ $app->post('/meeting', function (Request $request, Response $response, $args) {
             $this->logger->error($e->getMessage());
             $this->db->rollback();
         }
-    }
+
 
     //$this->view->render($response, 'newMeeting.latte', $tplVars);
     $basePath = $request->getUri()->getBasePath();
@@ -358,11 +430,9 @@ $app->post('/meeting', function (Request $request, Response $response, $args) {
 
 $app->post('/meeting/delete', function (Request $request, Response $response, $args) {
     $id_meeting = $request->getQueryParam('id_meeting');
-    echo ("Mám deprese");
     try {
         $stmt = $this->db->prepare('DELETE FROM meeting WHERE id_meeting = :id_meeting');
         $stmt->bindValue(':id_meeting', $id_meeting);
-
         $stmt->execute();
     } catch (PDOexception $e) {
         $this->logger->error($e->getMessage());
@@ -373,5 +443,28 @@ $app->post('/meeting/delete', function (Request $request, Response $response, $a
     return $response->withRedirect($basePath."/meetings");
 })->setName('meeting_delete');
 
+
+$app->get('/meeting/info', function (Request $request, Response $response, $args) {
+    $id_meeting = $request->getQueryParam('id_meeting');
+    try {
+        $stmt = $this->db->prepare('SELECT DISTINCT * FROM meeting INNER JOIN location USING (id_location)
+                                    WHERE id_meeting = :id_meeting');
+        $stmt->bindValue(':id_meeting', $id_meeting);
+        $stmt->execute();
+        $tplVars['meeting'] = $stmt->fetchall();
+
+        $stmt = $this->db->prepare('SELECT DISTINCT * FROM meeting INNER JOIN person_meeting USING (id_meeting) 
+                                    INNER JOIN person USING (id_person)
+                                    WHERE id_meeting = :id_meeting');
+        $stmt->bindValue(':id_meeting', $id_meeting);
+        $stmt->execute();
+        $tplVars['person'] = $stmt->fetchall();
+
+    } catch (PDOexception $e) {
+        $this->logger->error($e->getMessage());
+        exit('error occured');
+    }
+    return $this->view->render($response, 'infoMeeting.latte', $tplVars);
+})->setName("infoMeeting");
 
 

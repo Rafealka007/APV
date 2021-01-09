@@ -1,0 +1,75 @@
+{extends layout.latte}
+
+{block title}
+    Person info
+{/block}
+
+{block body}
+    <div class="container text-center">
+        <div class="d-flex justify-content-center pt-3">
+            <div class="border w-50 shadow pb-2">
+                <div class="border background">
+                    <h3 class="pb-2 pt-2">Meeting info</h3>
+                </div>
+                <div class="container row justify-content-center p-0 m-0">
+                    <div class="col row text-left justify-content-center">
+                        <div class="col-5 pt-2 pb-2"><span>When</span></div>
+                        <div class="col-6 pt-2 pb-2"><span>{$meeting[0]['start']}</span></div>
+                    </div>
+                </div>
+                <div class="container row justify-content-center p-0 m-0">
+                    <div class="col row text-left justify-content-center">
+                        <div class="col-5 pt-2 pb-2"><span>Duration</span></div>
+                        <div class="col-6 pt-2 pb-2"><span>{$meeting[0]['duration']}</span></div>
+                    </div>
+                </div>
+                <div class="container row justify-content-center p-0 m-0">
+                    <div class="col row text-left justify-content-center">
+                        <div class="col-5 pt-2 pb-2"><span>Description</span></div>
+                        <div class="col-6 pt-2 pb-2"><span>{$meeting[0]['description']}</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center pt-3">
+            <div class="border w-50 shadow pb-2">
+                <div class="border background">
+                    <h3 class="pb-2 pt-2">Location</h3>
+                </div>
+                <div class="container row justify-content-center p-0 m-0">
+                    <div class="col row text-left justify-content-center">
+                        <div class="col-5 pt-2 pb-2"><span>Adress</span></div>
+                        <div class="col-6 pt-2 pb-2"><span>{$meeting[0]['street_name']}</span><span>&nbsp;</span><span>{$meeting[0]['street_number']}</span></div>
+                    </div>
+                </div>
+                <div class="container row justify-content-center p-0 m-0">
+                    <div class="col row text-left justify-content-center">
+                        <div class="col-5 pt-2 pb-2"><span>&nbsp;</span></div>
+                        <div class="col-6 pt-2 pb-2"><span>{$meeting[0]['city']}</span></div>
+                    </div>
+                </div>
+                <div class="container row justify-content-center p-0 m-0">
+                    <div class="col row text-left justify-content-center">
+                        <div class="col-5 pt-2 pb-2"><span>&nbsp;</span></div>
+                        <div class="col-6 pt-2 pb-2"><span>{$meeting[0]['zip']}</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center pt-3">
+            <div class="border w-50 shadow pb-2">
+                <div class="border background">
+                    <h3 class="pb-2 pt-2">People</h3>
+                </div>
+                {foreach $person as $p}
+                <div class="container row justify-content-center p-0 m-0">
+                    <div class="col row text-left justify-content-center">
+                        <div class="col-12 pt-2 pb-2"><span>{$p['first_name']}</span><span>&nbsp;</span><span>{$p['last_name']}</span></div>
+                    </div>
+                </div>
+                {/foreach}
+            </div>
+        </div>
+
+    </div>
+{/block}

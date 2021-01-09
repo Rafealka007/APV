@@ -1,0 +1,39 @@
+{extends layout.latte}
+
+{block title}
+    Person info
+{/block}
+
+{block body}
+<div class="container pt-4">
+
+<h3>Add relation</h3>
+    <form method="post">
+        <div class="form-row">
+            <div class="col-sm-3 form-group">
+                 {foreach $relation as $i}
+                    <input type="radio" name="id_relation_type" value={$i['id_relation_type']}>
+                    <label for="id_relation_type">{$i['name']}</label>
+                    <br>
+                {/foreach}
+            </div>
+            <div class="col-sm-3 form-group">
+                <label for="id_person">Name</label>
+                <select name="id_person2" id="people" size="1">
+                  {foreach $person as $i}
+                     <option value={$i['id_person']}><span>{$i['first_name']}</span><span>&nbsp;</span><span>{$i['last_name']}</span></option>
+                   {/foreach}
+                  </select>
+            </div>
+            <div class="col-sm-3 form-group">
+                <label for="decription">Description</label>
+                <input class="form-control" type="text" name="description" placeholder="description" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">
+                <span class="fa fa-plus"></span> Add
+          </button>
+    </form>
+
+    </div>
+{/block}

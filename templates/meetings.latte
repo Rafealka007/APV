@@ -34,14 +34,14 @@
                         <td>{$m['description']}</td>
                         <td class="text-center">{$m['id_meeting']}</td>
                         <td class="text-center">
-                            <a href="">
+                            <a href="{link infoMeeting}?id_meeting={$m['id_meeting']}">
                                 <button class="btn-sm btn-secondary">
                                     <span class="material-icons">person_search</span>
                                 </button>
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{link updateMeeting}?id_person={$m['id_meeting']}">
+                            <a href="{link updateMeeting}?id_meeting={$m['id_meeting']}">
                                 <button class="btn-sm btn-primary">
                                     <span class="material-icons">border_color</span>
                                 </button>
