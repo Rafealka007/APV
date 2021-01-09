@@ -6,27 +6,27 @@
 
 {block body}
 	<div class="container">
-	<div>
-		<div class="row text-center pt-4 pb-4 justify-content-between">
-			<div class="col-5 m-0">
-				<form action="{link search}" method="get">
-					<div class="input-group">
-						<form action="{link search}" method="get">
-							<input type="text" class="form-control form-control-lg my-button" name="q" placeholder="Search...">
-							<div class="input-group-append">
-								<button class="btn btn-outline-secondary p-0 pr-2 pl-2 h-100 d-flex justify-content-center text-center align-items-center my-button" type="submit"><span class="material-icons">forward</span></button>
-							</div>
-						</form>
-					</div>
-			</div>
-			<div class="col-4 text-right m-0">
-				<a href="{link newPerson}" class="btn btn-success btn-lg my-button">
-					<div class="h-100 d-flex justify-content-center text-center align-items-center">Add person<span class="material-icons pl-2">add_circle_outline</span>
-					</div>
-				</a>
+		<div>
+			<div class="row text-center pt-4 pb-4 justify-content-between">
+				<div class="col-5 m-0">
+					<form action="{link search}" method="get">
+						<div class="input-group">
+							<form action="{link search}" method="get">
+								<input type="text" class="form-control form-control-lg my-button" name="q" placeholder="Search...">
+								<div class="input-group-append">
+									<button class="btn btn-outline-secondary p-0 pr-2 pl-2 h-100 d-flex justify-content-center text-center align-items-center my-button" type="submit"><span class="material-icons">forward</span></button>
+								</div>
+							</form>
+						</div>
+				</div>
+				<div class="col-4 text-right m-0">
+					<a href="{link newPerson}" class="btn btn-success btn-lg my-button">
+						<div class="h-100 d-flex justify-content-center text-center align-items-center">Add person<span class="material-icons pl-2">add_circle_outline</span>
+						</div>
+					</a>
+				</div>
 			</div>
 		</div>
-	</div>
 
 
 
@@ -43,7 +43,7 @@
 				<th class="text-center">Add relation</th>
 			</tr>
 			{foreach $persons_list as $p}
-				<tr> 
+				<tr>
 					<td class="text-left">{$p['first_name']}</td>
 					<td class="text-left">{$p['last_name']}</td>
 					<td class="text-center">{$p['height']}</td>
@@ -79,7 +79,7 @@
 				</tr>
 			{/foreach}
 		</table>
-		</div>
+	</div>
 	</div>
 
 	<script type="text/javascript">
