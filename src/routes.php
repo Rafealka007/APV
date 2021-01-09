@@ -173,7 +173,7 @@ $app->post('/persons/delete', function (Request $request, Response $response, $a
             exit('error occured');
         }
     } else {
-        exit('is person is missing');
+        exit('person is missing');
     }
     $basePath = $request->getUri()->getBasePath();
     return $response->withRedirect($basePath."/persons");
@@ -185,10 +185,6 @@ $app->get('/person/info', function (Request $request, Response $response, $args)
     if (!empty($id_person)) {
         try {
             $stmt = $this->db->prepare('SELECT DISTINCT * FROM person INNER JOIN location USING (id_location)
-                                        INNER JOIN contact USING (id_person)
-                                        INNER JOIN contact_type USING (id_contact_type)
-                                        INNER JOIN relation ON (person.id_person = relation.id_person1)
-                                        INNER JOIN relation_type USING (id_relation_type)
                                         WHERE id_person = :id_person');
             $stmt->bindValue(':id_person', $id_person);
             $stmt->execute();
@@ -198,6 +194,26 @@ $app->get('/person/info', function (Request $request, Response $response, $args)
             $stmt->bindValue(':id_person', $id_person);
             $stmt->execute();
             $tplVars['contact'] = $stmt->fetchall();
+
+            $stmt = $this->db->prepare('SELECT DISTINCT id_person as my_id,person.first_name as my_name, person.last_name as my_name_2,name, friend_first_name, friend_last_name,description FROM person 
+                                        INNER JOIN relation ON (person.id_person = relation.id_person1)
+                                        INNER JOIN relation_type USING (id_relation_type)
+                                        INNER JOIN (SELECT DISTINCT id_person AS friend_id, first_name AS friend_first_name, last_name AS friend_last_name FROM person) AS friend ON (id_person2 = friend.friend_id)
+                                        WHERE id_person = :id_person');
+            $stmt->bindValue(':id_person', $id_person);
+            $stmt->execute();
+            $tplVars['relation'] = $stmt->fetchall();
+
+            $stmt = $this->db->prepare('SELECT DISTINCT id_person as my_id,person.first_name as my_name, person.last_name as my_name_2, name, friend_first_name, friend_last_name,description FROM person 
+                                        INNER JOIN relation ON (person.id_person = relation.id_person2)
+                                        INNER JOIN relation_type USING (id_relation_type)
+                                        INNER JOIN (SELECT DISTINCT id_person AS friend_id, first_name AS friend_first_name, last_name AS friend_last_name FROM person) AS friend ON (id_person1 = friend.friend_id)
+                                        WHERE id_person = :id_person');
+            $stmt->bindValue(':id_person', $id_person);
+            $stmt->execute();
+            $tplVars['relation2'] = $stmt->fetchall();
+
+
         } catch (PDOexception $e) {
             $this->logger->error($e->getMessage());
             exit('error occured');
@@ -210,6 +226,30 @@ $app->get('/person/info', function (Request $request, Response $response, $args)
 
 })->setName("infoPerson");
 
+
+$app->get('/persons/addR', function (Request $request, Response $response, $args) {
+    $id_person = $request->getQueryParam('id_person');
+    $formData = $request->getParsedBody();
+    print_r($formData);
+    if (!empty($id_person)) {
+        try {
+            $stmt = $this->db->prepare('INSERT INTO relation (id_person1, id_person2, description, id_relation_type) VALUES ($id_person, :id_person2, :description, :id_relation_type)');
+            $stmt->bindValue(':id_person1', $id_person);
+            $stmt->bindValue(':id_person2', $formData['id_person2']);
+            $stmt->bindValue(':description', $formData['decsription']);
+            $stmt->bindValue(':id_relation_type', $formData['id_relation_type']);
+            $stmt->execute();
+        } catch (PDOexception $e) {
+            $this->logger->error($e->getMessage());
+
+            exit($id_person);
+        }
+    } else {
+        exit('person is missing');
+    }
+    $basePath = $request->getUri()->getBasePath();
+    return $response->withRedirect($basePath."/persons");
+})->setName('addRelation');
 
 
 
@@ -303,7 +343,6 @@ $app->post('/meeting', function (Request $request, Response $response, $args) {
             $tplVars['message'] = 'Error occured';
             $this->logger->error($e->getMessage());
             $this->db->rollback();
-            exit("FUJ");
         }
     }
 
