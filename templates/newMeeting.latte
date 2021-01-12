@@ -14,7 +14,7 @@
                 </div>
                 <div class="col-sm-3 form-group">
                     <label for="scroll">Location</label>
-                    <select class="form-control" id="scroll">
+                    <select name="id_location" class="form-control" id="scroll">
                         {foreach $location_list as $l}
                             <option value={$l['id_location']}><span>{$l['city']}</span><span>, </span><span>{$l['street_name']}</span><span> </span><span>{$l['street_number']}</span></option>
                         {/foreach}
@@ -25,7 +25,7 @@
             <div class="form-row justify-content-center">
                 <div class="col-sm-3 form-group">
                     <label for="description">Description</label>
-                    <input class="form-control" type="text" name="decription" placeholder="Description" required>
+                    <input class="form-control" type="text" name="description" placeholder="Description" required>
                 </div>
                 <div class="col-sm-3 form-group">
                     <label for="duration">Duration</label>
@@ -35,7 +35,7 @@
             <div class="form-row justify-content-center">
                 <div class="col-5 form-group">
                     <label for="people">Attending people (multiple choice)</label>
-                    <select name="people" id="people" class="certain-w" multiple>
+                    <select name="people[]" id="people" class="certain-w" multiple>
                         {foreach $location_list as $l}
                             <option value={$l['id_person']}><span>{$l['first_name']}</span><span> </span><span>{$l['last_name']}</span></option>
                         {/foreach}

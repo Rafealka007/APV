@@ -403,20 +403,30 @@ $app->get('/meeting', function (Request $request, Response $response, $args) {
 /* NEW MEETING zpracovani formulare po odoslani */
 $app->post('/meeting', function (Request $request, Response $response, $args) {
     $formData = $request->getParsedBody();
-    $tplVars = [];
-
+    #print_r($formData);
+    #print_r($_POST['people']);
         try {
             $this->db->beginTransaction();
-            $stmt = $this->db->prepare("INSERT INTO meeting (start, decsription, duration, id_location) VALUES (:start, :description, :duration, :id_location)");
+            $stmt = $this->db->prepare("INSERT INTO meeting (start, description, duration, id_location) VALUES (:start, :description, :duration, :id_location)");
             $stmt->bindValue(':start', $formData['start']);
             $stmt->bindValue(':description', $formData['description']);
             $stmt->bindValue(':duration', $formData['duration']);
             $stmt->bindValue(':id_location', $formData['id_location']);
             $stmt->execute();
 
-            $tplVars['message'] = 'Meeting succefully added';
+            print_r($formData);
+            $stmt = $this->db->prepare("SELECT id_meeting FROM meeting WHERE (id_location=:id_location, start=:start, duration=:duration, description=:description)");
+            $stmt->bindValue(':start', $formData['start']);
+            $stmt->bindValue(':description', $formData['description']);
+            $stmt->bindValue(':duration', $formData['duration']);
+            $stmt->bindValue(':id_location', $formData['id_location']);
+            $stmt->execute();
 
             $this->db->commit();
+
+            foreach ($_POST['people'] as $person) {
+
+            }
         } catch (PDOexception $e) {
             $tplVars['message'] = 'Error occured';
             $this->logger->error($e->getMessage());
