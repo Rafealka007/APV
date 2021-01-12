@@ -1,0 +1,38 @@
+{extends layout.latte}
+
+{block title}
+    Add contact
+{/block}
+
+{block body}
+    <div class="container pt-4 d-flex justify-content-center text-center">
+        <div class="w-75">
+            <h2 class="pt-3">Add contact</h2>
+            <span>{$person[0]['first_name']}&nbsp;{$person[0]['last_name']}</span>
+            <div class="text-center pt-3">
+                <form method="post">
+                    <div class="form-row">
+                        <div class="col-6 form-group">
+                            <label for="id_relation_type"><h4 class="pt-3 pb-2">Contact</h4></label>
+                            <div>
+                                <select class="form-control" name="id_contact_type" size="1">
+                                    {foreach $contact as $i}
+                                        <option value={$i['id_contact_type']}><span>{$i['name']}</span></option>
+                                    {/foreach}
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="col-6 form-group">
+                            <label for="decription"><h4 class="pt-3 pb-2">Contact</h4></label>
+                            <input class="form-control" type="text" name="contact" placeholder="contact" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <span class="fa fa-plus"></span> Add
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{/block}

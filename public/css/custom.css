@@ -1,6 +1,4 @@
-/*
-  place custom CSS definitions into this file to override Bootstrap
-*/
+
 nav {
   background-color: #14213d;
   font-size: 22px;
@@ -38,6 +36,7 @@ nav {
   border: 1px solid #BFBFBF;
   box-shadow: 10px 10px 5px #aaaaaa;
 }
+
 
 
 

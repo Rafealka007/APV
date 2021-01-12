@@ -1,39 +1,48 @@
 {extends layout.latte}
 
 {block title}
-    Person info
+    Add relation
 {/block}
 
 {block body}
-<div class="container pt-4">
+    <div class="container pt-4 d-flex justify-content-center text-center">
+      <div class="w-75">
+        <h2 class="pt-3">Add relation</h2>
+          <span>{$person[0]['first_name']}&nbsp;{$person[0]['last_name']}</span>
+          <div class="text-center pt-3">
+        <form method="post">
+            <div class="form-row">
+                <div class="col-4 form-group">
+                  <label for="id_relation_type"><h4 class="pt-3 pb-2">Relationship type</h4></label>
+                    <div>
+                      <select class="form-control" name="id_relation_type" size="1">
+                    {foreach $relation as $i}
 
-<h3>Add relation</h3>
-    <form method="post">
-        <div class="form-row">
-            <div class="col-sm-3 form-group">
-                 {foreach $relation as $i}
-                    <input type="radio" name="id_relation_type" value={$i['id_relation_type']}>
-                    <label for="id_relation_type">{$i['name']}</label>
-                    <br>
-                {/foreach}
-            </div>
-            <div class="col-sm-3 form-group">
-                <label for="id_person">Name</label>
-                <select name="id_person2" id="people" size="1">
-                  {foreach $person as $i}
-                     <option value={$i['id_person']}><span>{$i['first_name']}</span><span>&nbsp;</span><span>{$i['last_name']}</span></option>
-                   {/foreach}
+                          <option value={$i['id_relation_type']}><span>{$i['name']}</span></option>
+                        <br>
+                    {/foreach}
                   </select>
-            </div>
-            <div class="col-sm-3 form-group">
-                <label for="decription">Description</label>
-                <input class="form-control" type="text" name="description" placeholder="description" required>
-            </div>
-        </div>
-        <button type="submit" class="btn btn-success">
-                <span class="fa fa-plus"></span> Add
-          </button>
-    </form>
+                  </div>
 
+                </div>
+                <div class="col-4 form-group">
+                    <label for="id_person"><h4 class="pt-3 pb-2">Name</h4></label>
+                    <select class="form-control" name="id_person2" id="people" size="1">
+                        {foreach $person as $i}
+                            <option value={$i['id_person']}><span>{$i['first_name']}</span><span>&nbsp;</span><span>{$i['last_name']}</span></option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div class="col-4 form-group">
+                    <label for="decription"><h4 class="pt-3 pb-2">Description</h4></label>
+                    <input class="form-control" type="text" name="description" placeholder="description" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success">
+                <span class="fa fa-plus"></span> Add
+            </button>
+        </form>
+      </div>
+    </div>
     </div>
 {/block}

@@ -1,21 +1,23 @@
 {block menu}
-	<nav class="navbar navbar-expand-lg nav-fill sticky-top w-100 m-0 p-0">
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+	<nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light nav-fill">
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		<div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-			<ul class="navbar-nav p-0 m-0 better-nav">
-				<li class="nav-item better-nav p-3 text-white">
+
+		<div class="collapse navbar-collapse d-flex justify-content-center" id="navbarTogglerDemo03">
+			<ul class="navbar-nav mr-auto mt-2 mt-lg-0 d-flex justify-content-center">
+				<li class="nav-item better-nav">
 					<a class="nav-link" href="{$basePath}">Home</a>
 				</li>
-				<li class="nav-item better-nav p-3">
+				<li class="nav-item">
 					<a class="nav-link" href="{$basePath}/persons">Person list</a>
 				</li>
-				<li class="nav-item better-nav p-3">
+				<li class="nav-item">
 					<a class="nav-link" href="{$basePath}/meetings">Meetings</a>
 				</li>
 			</ul>
 		</div>
 	</nav>
+
 
 {/block menu}

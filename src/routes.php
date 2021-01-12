@@ -262,7 +262,7 @@ $app->post('/person/addRelation', function (Request $request, Response $response
     }
     $basePath = $request->getUri()->getBasePath();
     return $response->withRedirect($basePath."/person/info?id_person=".$id_person);
-})->setName('addRelation');
+})->setName('addRelations');
 
 /* delete relations */
 $app->post('/person/infoPerson/removeRelations', function (Request $request, Response $response, $args) {
@@ -278,6 +278,60 @@ $app->post('/person/infoPerson/removeRelations', function (Request $request, Res
     $basePath = $request->getUri()->getBasePath();
     return $response->withRedirect($basePath."/person/info?id_person=".$_POST['id_person']);
 })->setName("removeRelation");
+
+
+
+/*contact Nacteni formulare*/
+$app->get('/person/addContact', function (Request $request, Response $response, $args) {
+    $stmt = $this->db->prepare("SELECT * FROM contact_type ORDER BY name");
+    $stmt->execute();
+    $tplVars["contact"] = $stmt->fetchall();
+    $stmt = $this->db->prepare("SELECT * FROM person ORDER BY first_name");
+    $stmt->execute();
+    $tplVars["person"] = $stmt->fetchall();
+    return $this->view->render($response, 'addContact.latte', $tplVars);
+})->setName("addContact");
+
+
+/*ADD contact*/
+$app->post('/person/addContact', function (Request $request, Response $response, $args) {
+    $formData = $request->getParsedBody();
+    $id_person = $request->getQueryParam('id_person');
+    print_r($id_person);
+    print_r($formData);
+    if (!empty($id_person)) {
+        try {
+            $stmt = $this->db->prepare('INSERT INTO contact (id_person, id_contact_type, contact) VALUES (:id_person, :id_contact_type, :contact)');
+            $stmt->bindValue(':id_person', $id_person);
+            $stmt->bindValue(':id_contact_type', $formData['id_contact_type']);
+            $stmt->bindValue(':contact', $formData['contact']);
+            $stmt->execute();
+            printf($id_person);
+        } catch (PDOexception $e) {
+            $this->logger->error($e->getMessage());
+            exit();
+        }
+    } else {
+        exit('Error in id_person');
+    }
+    $basePath = $request->getUri()->getBasePath();
+    return $response->withRedirect($basePath."/person/info?id_person=".$id_person);
+})->setName('addContact');
+
+/* delete contact */
+$app->post('/person/infoPerson/removeContact', function (Request $request, Response $response, $args) {
+    $id_contact = $request->getQueryParam('id_contact');
+    try {
+        $stmt = $this->db->prepare('DELETE FROM contact WHERE id_contact = :id_contact');
+        $stmt->bindValue(':id_contact', $id_contact);
+        $stmt->execute();
+    } catch (PDOexception $e) {
+        $this->logger->error($e->getMessage());
+        exit('error occured');
+    }
+    $basePath = $request->getUri()->getBasePath();
+    return $response->withRedirect($basePath."/person/info?id_person=".$_POST['id_person']);
+})->setName("removeContact");
 
 
 
