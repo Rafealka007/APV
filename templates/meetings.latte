@@ -6,18 +6,13 @@
 
 {block body}
     <div class="container">
-        <!--<form action="{link search}" method="get">
-			<label>Search:</label>
-			<input type="text" name="q" class="form-control">
-			<br>
-			<button type="submit" class="btn btn-primary">
-				Search
-			</button>
-		</form>-->
-
-		<a href="{link newMeeting}" class="btn btn-success">
-			<span class="fa fa-angry"></span> Add new person
-		</a>
+        <div class="row justify-content-center pt-3 pb-3">
+            <div class="col-6 d-flex justify-content-center">
+                <a href="{link newMeeting}" class="btn btn-success btn-lg my-button">
+                    <div class="h-100 d-flex justify-content-center text-center align-items-center">Add meeting<span class="material-icons pl-2">add_circle_outline</span></div>
+                </a>
+            </div>
+        </div>
         <div>
             <table class="table table-hover table-striped">
                 <tr>

@@ -197,7 +197,7 @@ $app->get('/person/info', function (Request $request, Response $response, $args)
             $stmt->execute();
             $tplVars['contact'] = $stmt->fetchall();
 
-            $stmt = $this->db->prepare('SELECT DISTINCT id_person as my_id,person.first_name as my_name, person.last_name as my_name_2,name, friend_first_name, friend_last_name,description FROM person 
+            $stmt = $this->db->prepare('SELECT DISTINCT id_person as my_id,person.first_name as my_name, person.last_name as my_name_2,name, id_relation, friend_first_name, friend_last_name,description FROM person 
                                         INNER JOIN relation ON (person.id_person = relation.id_person1)
                                         INNER JOIN relation_type USING (id_relation_type)
                                         INNER JOIN (SELECT DISTINCT id_person AS friend_id, first_name AS friend_first_name, last_name AS friend_last_name FROM person) AS friend ON (id_person2 = friend.friend_id)
@@ -206,7 +206,7 @@ $app->get('/person/info', function (Request $request, Response $response, $args)
             $stmt->execute();
             $tplVars['relation'] = $stmt->fetchall();
 
-            $stmt = $this->db->prepare('SELECT DISTINCT id_person as my_id,person.first_name as my_name, person.last_name as my_name_2, name, friend_first_name, friend_last_name,description FROM person 
+            $stmt = $this->db->prepare('SELECT DISTINCT id_person as my_id,person.first_name as my_name, person.last_name as my_name_2, name, id_relation, friend_first_name, friend_last_name,description FROM person 
                                         INNER JOIN relation ON (person.id_person = relation.id_person2)
                                         INNER JOIN relation_type USING (id_relation_type)
                                         INNER JOIN (SELECT DISTINCT id_person AS friend_id, first_name AS friend_first_name, last_name AS friend_last_name FROM person) AS friend ON (id_person1 = friend.friend_id)
@@ -245,7 +245,6 @@ $app->get('/person/addRelation', function (Request $request, Response $response,
 $app->post('/person/addRelation', function (Request $request, Response $response, $args) {
     $formData = $request->getParsedBody();
     $id_person = $request->getQueryParam('id_person');
-    print_r($formData);
     if (!empty($id_person)) {
         try {
             $stmt = $this->db->prepare('INSERT INTO relation (id_person1, id_person2, description, id_relation_type) VALUES (:id_person1, :id_person2, :description, :id_relation_type)');
@@ -254,7 +253,6 @@ $app->post('/person/addRelation', function (Request $request, Response $response
             $stmt->bindValue(':description', $formData['description']);
             $stmt->bindValue(':id_relation_type', $formData['id_relation_type']);
             $stmt->execute();
-            print_r($stmt);
         } catch (PDOexception $e) {
             $this->logger->error($e->getMessage());
             exit($id_person);
@@ -263,69 +261,23 @@ $app->post('/person/addRelation', function (Request $request, Response $response
         exit('Error in id_person');
     }
     $basePath = $request->getUri()->getBasePath();
-    return $response->withRedirect($basePath."/persons");
+    return $response->withRedirect($basePath."/person/info?id_person=".$id_person);
 })->setName('addRelation');
 
-
-/*RELATIONS REMOVE nacteni form*/
-$app->get('/person/remRelation', function (Request $request, Response $response, $args) {
-    $id_person = $request->getQueryParam('id_person');
-    if (!empty($id_person)) {
-        try {
-            /*$stmt = $this->db->prepare('SELECT DISTINCT * FROM person INNER JOIN location USING (id_location)
-                                        WHERE id_person = :id_person');
-            $stmt->bindValue(':id_person', $id_person);
-            $stmt->execute();
-            $tplVars['person'] = $stmt->fetchall();*/
-
-
-            $stmt = $this->db->prepare('SELECT DISTINCT id_person as my_id,person.first_name as my_name, person.last_name as my_name_2,name, friend_first_name, friend_last_name,description FROM person 
-                                        INNER JOIN relation ON (person.id_person = relation.id_person1)
-                                        INNER JOIN relation_type USING (id_relation_type)
-                                        INNER JOIN (SELECT DISTINCT id_person AS friend_id, first_name AS friend_first_name, last_name AS friend_last_name FROM person) AS friend ON (id_person2 = friend.friend_id)
-                                        WHERE id_person = :id_person');
-            $stmt->bindValue(':id_person', $id_person);
-            $stmt->execute();
-            $tplVars['relation'] = $stmt->fetchall();
-
-            $stmt = $this->db->prepare('SELECT DISTINCT id_person as my_id,person.first_name as my_name, person.last_name as my_name_2, name, friend_first_name, friend_last_name,description FROM person 
-                                        INNER JOIN relation ON (person.id_person = relation.id_person2)
-                                        INNER JOIN relation_type USING (id_relation_type)
-                                        INNER JOIN (SELECT DISTINCT id_person AS friend_id, first_name AS friend_first_name, last_name AS friend_last_name FROM person) AS friend ON (id_person1 = friend.friend_id)
-                                        WHERE id_person = :id_person');
-            $stmt->bindValue(':id_person', $id_person);
-            $stmt->execute();
-            $tplVars['relation2'] = $stmt->fetchall();
-
-
-        } catch (PDOexception $e) {
-            $this->logger->error($e->getMessage());
-            exit('error occured');
-        }
-    } else {
-        exit('person is missing');
-    }
-    return $this->view->render($response, 'removeRelation.latte', $tplVars);
-})->setName("removeRelation");
-
 /* delete relations */
-$app->post('/person/removeRelations', function (Request $request, Response $response, $args) {
-    $id_person = $request->getQueryParam('id_person2');
-    if (!empty($id_person)) {
-        try {
-            $stmt = $this->db->prepare('DELETE FROM relations WHERE id_person2 = :id_person');
-            $stmt->bindValue(':id_person', $id_person);
-            $stmt->execute();
-        } catch (PDOexception $e) {
-            $this->logger->error($e->getMessage());
-            exit('error occured');
-        }
-    } else {
-        exit('person is missing');
+$app->post('/person/infoPerson/removeRelations', function (Request $request, Response $response, $args) {
+    $id_relation = $request->getQueryParam('id_relation');
+    try {
+        $stmt = $this->db->prepare('DELETE FROM relation WHERE id_relation = :id_relation');
+        $stmt->bindValue(':id_relation', $id_relation);
+        $stmt->execute();
+    } catch (PDOexception $e) {
+        $this->logger->error($e->getMessage());
+        exit('error occured');
     }
     $basePath = $request->getUri()->getBasePath();
-    return $response->withRedirect($basePath."/persons");
-});
+    return $response->withRedirect($basePath."/person/info?id_person=".$_POST['id_person']);
+})->setName("removeRelation");
 
 
 
