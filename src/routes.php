@@ -405,24 +405,24 @@ $app->post('/meeting', function (Request $request, Response $response, $args) {
     $formData = $request->getParsedBody();
     #print_r($formData);
     #print_r($_POST['people']);
+    $dbDate = date('Y-m-d H:i:s', strtotime($_POST["start"]));
         try {
-            $this->db->beginTransaction();
+            #$this->db->beginTransaction();
             $stmt = $this->db->prepare("INSERT INTO meeting (start, description, duration, id_location) VALUES (:start, :description, :duration, :id_location)");
-            $stmt->bindValue(':start', $formData['start']);
+            $stmt->bindValue(':start', $dbDate);
             $stmt->bindValue(':description', $formData['description']);
             $stmt->bindValue(':duration', $formData['duration']);
             $stmt->bindValue(':id_location', $formData['id_location']);
             $stmt->execute();
-
-            print_r($formData);
+            print_r($dbDate);
             $stmt = $this->db->prepare("SELECT id_meeting FROM meeting WHERE (id_location=:id_location, start=:start, duration=:duration, description=:description)");
             $stmt->bindValue(':start', $formData['start']);
             $stmt->bindValue(':description', $formData['description']);
             $stmt->bindValue(':duration', $formData['duration']);
             $stmt->bindValue(':id_location', $formData['id_location']);
             $stmt->execute();
-
-            $this->db->commit();
+            print_r("chciumrit");
+            #$this->db->commit();
 
             foreach ($_POST['people'] as $person) {
 
@@ -430,7 +430,7 @@ $app->post('/meeting', function (Request $request, Response $response, $args) {
         } catch (PDOexception $e) {
             $tplVars['message'] = 'Error occured';
             $this->logger->error($e->getMessage());
-            $this->db->rollback();
+            #$this->db->rollback();
         }
 
 
