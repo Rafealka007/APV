@@ -43,7 +43,7 @@
                             </a>
                         </td>
                         <td class="text-center">
-                            <form method="post" onsubmit="return confirmDelete({$m['id_meeting']})" action="{link meeting_delete}?id_person={$m['id_meeting']}">
+                            <form method="post" onsubmit="return confirmDelete({$m['id_meeting']})" action="{link meeting_delete}?id_meeting={$m['id_meeting']}">
                                 <button class="btn-sm btn-danger">
                                     <span class="material-icons">delete_outline</span>
                                 </button>

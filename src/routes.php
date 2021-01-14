@@ -11,28 +11,16 @@ $app->get('/', function (Request $request, Response $response, $args) {
 })->setName('index');
 
 
-
-$app->post('/test', function (Request $request, Response $response, $args) {
-    //read POST data
-    $input = $request->getParsedBody();
-
-    //log
-    $this->logger->info('Your name: ' . $input['person']);
-
-    return $response->withHeader('Location', $this->router->pathFor('index'));
-})->setName('redir');
-
-
-/* Zoznam vsech osob v DB */
+/* SEZNAM vsech */
 $app->get('/persons', function (Request $request, Response $response, $args) {
-    $stmt = $this->db->query('SELECT * FROM person ORDER BY first_name'); # toto vrati len DB objekt, nie vysledok!
-    $tplVars['persons_list'] = $stmt->fetchall(); # [ ['id_person' => 1, 'first_name' => 'Alice' ... ], ['id_person' => 2, 'first_name' => 'Bob' ... ] . ]
+    $stmt = $this->db->query('SELECT * FROM person ORDER BY first_name');
+    $tplVars['persons_list'] = $stmt->fetchall();
     return $this->view->render($response, 'persons.latte', $tplVars);
 });
 
-
+/*VYHLEDAVANI*/
 $app->get('/search', function (Request $request, Response $response, $args) {
-    $queryParams = $request->getQueryParams(); # [kluc => hodnota]
+    $queryParams = $request->getQueryParams();
     if(! empty($queryParams) ) {
         $stmt = $this->db->prepare("SELECT * FROM person WHERE lower(first_name) = lower(:fname) OR lower(last_name) = lower(:lname)");
         $stmt->bindParam(':fname', $queryParams['q']);
@@ -44,12 +32,12 @@ $app->get('/search', function (Request $request, Response $response, $args) {
 })->setName('search');
 
 
-/* nacitanie formularu */
+/* PERSON nacteni nove person */
 $app->get('/person', function (Request $request, Response $response, $args) {
     return $this->view->render($response, 'newPerson.latte');
 })->setName('newPerson');
 
-/* spracovanie formu po odoslani */
+/* PERSON zpracovani new */
 $app->post('/person', function (Request $request, Response $response, $args) {
     $formData = $request->getParsedBody();
     $tplVars = [];
@@ -100,7 +88,6 @@ $app->get('/person/update', function (Request $request, Response $response, $arg
         if (empty($tplVars["formData"])){
             exit("person not found");
         } else {
-            print_r($tplVars["formData"]);
             return $this->view->render($response, 'updatePerson.latte', $tplVars);
         }
     }
@@ -109,7 +96,6 @@ $app->get('/person/update', function (Request $request, Response $response, $arg
 /*person update prace s formularem */
 $app->post("/person/update", function (Request $request, Response $response, $args){
     $id_person = $request->getQueryParam('id_person');
-    $params = $request->getQueryParams();
     $formData = $request->getParsedBody();
     if (empty($formData["first_name"]) || empty($formData["last_name"]) || empty($formData["nickname"])){
         $tplVars["message"] = "Please fill required fields";
@@ -121,13 +107,11 @@ $app->post("/person/update", function (Request $request, Response $response, $ar
                 $stmt = $this->db->prepare("SELECT id_location FROM person WHERE id_person = :id_person");
                 $stmt->bindValue(":id_person", $id_person);
                 $stmt->execute();
-                $id_location = $stmt->fetch()["id_location"]; #{"id location" => 123}
+                $id_location = $stmt->fetch()["id_location"];
 
                 if($id_location){
-                    #osoba má adresu
                     editLocation($this, $id_location, $formData);
                 } else{
-                    #osoba nemá adresu
                     $id_location = newLocation($this, $formData);
                 }
             }else{
@@ -264,7 +248,7 @@ $app->post('/person/addRelation', function (Request $request, Response $response
     return $response->withRedirect($basePath."/person/info?id_person=".$id_person);
 })->setName('addRelations');
 
-/* delete relations */
+/*DELETE relations */
 $app->post('/person/infoPerson/removeRelations', function (Request $request, Response $response, $args) {
     $id_relation = $request->getQueryParam('id_relation');
     try {
@@ -281,7 +265,7 @@ $app->post('/person/infoPerson/removeRelations', function (Request $request, Res
 
 
 
-/*contact Nacteni formulare*/
+/*CONTACT Nacteni formulare*/
 $app->get('/person/addContact', function (Request $request, Response $response, $args) {
     $stmt = $this->db->prepare("SELECT * FROM contact_type ORDER BY name");
     $stmt->execute();
@@ -318,7 +302,7 @@ $app->post('/person/addContact', function (Request $request, Response $response,
     return $response->withRedirect($basePath."/person/info?id_person=".$id_person);
 })->setName('addContact');
 
-/* delete contact */
+/* DELETE contact */
 $app->post('/person/infoPerson/removeContact', function (Request $request, Response $response, $args) {
     $id_contact = $request->getQueryParam('id_contact');
     try {
@@ -344,54 +328,12 @@ $app->post('/person/infoPerson/removeContact', function (Request $request, Respo
 
 
 
-/*MEETINGS*/
+/*MEETINGS vypis vsech*/
 $app->get('/meetings', function (Request $request, Response $response, $args) {
-    $stmt = $this->db->query('SELECT * FROM meeting ORDER BY start');
+    $stmt = $this->db->query('SELECT * FROM meeting ORDER BY id_meeting DESC');
     $tplVars['meeting_list'] = $stmt->fetchall();
     return $this->view->render($response, 'meetings.latte', $tplVars);
 });
-
-// UPDATE MEETING nacteni formulare
-$app->get('/meeting/update', function (Request $request, Response $response, $args) {
-    $params = $request->getQueryParams();
-    if (!empty($params["id_meeting"])){
-        $stmt = $this->db->prepare("SELECT * FROM meeting WHERE id_meeting = :id_meeting");
-        $stmt->bindValue(":id_meeting", $params["id_meeting"]);
-        $stmt->execute();
-        $tplVars["formData"] = $stmt->fetch();
-        if (empty($tplVars["formData"])){
-            exit("Meeting not found");
-        } else {
-            return $this->view->render($response, 'updateMeeting.latte', $tplVars);
-        }
-    }
-})->setName("updateMeeting");
-
-// UPDATE MEETING prace s formularem
-$app->post("/meeting/update", function (Request $request, Response $response, $args){
-    $id_meeting = $request->getQueryParam('id_meeting');
-    $formData = $request->getParsedBody();
-    try {
-        $stmt = $this->db->prepare("UPDATE meeting SET start = :start, 
-														  decription = :description,
-														  duration = :duration, 
-														  id_location = :id_location 
-													  WHERE id_meeting = :id_meeting");
-        $stmt->bindValue(":start", $formData["start"]);
-        $stmt->bindValue(":description", $formData["description"]);
-        $stmt->bindValue(":duration", $formData["duration"]);
-        $stmt->bindValue(":id_location", $formData["id_location"]);
-        $stmt->bindValue(":meeting", $id_meeting);
-        $stmt->execute();
-    } catch (PDOexception $e) {
-        $tplVars['message'] = 'Error occured in updatemeeting';
-    }
-    $tplVars["formData"] = $formData;
-    $this->view->render($response, 'updateMeeting.latte', $tplVars);
-    $basePath = $request->getUri()->getBasePath();
-    return $response->withRedirect($basePath."/persons");
-});
-
 
 /* NEW MEETING nacteni formulare*/
 $app->get('/meeting', function (Request $request, Response $response, $args) {
@@ -400,66 +342,42 @@ $app->get('/meeting', function (Request $request, Response $response, $args) {
     return $this->view->render($response, 'newMeeting.latte', $tplVars);
 })->setName('newMeeting');
 
-/* NEW MEETING zpracovani formulare po odoslani */
+/* NEW MEETING zpracovani formulare po odeslani */
 $app->post('/meeting', function (Request $request, Response $response, $args) {
     $formData = $request->getParsedBody();
     #print_r($formData);
     #print_r($_POST['people']);
+    $temp = $_POST['people'];
     $dbDate = date('Y-m-d H:i:s', strtotime($_POST["start"]));
-        try {
-            #$this->db->beginTransaction();
-            $stmt = $this->db->prepare("INSERT INTO meeting (start, description, duration, id_location) VALUES (:start, :description, :duration, :id_location)");
-            $stmt->bindValue(':start', $dbDate);
-            $stmt->bindValue(':description', $formData['description']);
-            $stmt->bindValue(':duration', $formData['duration']);
-            $stmt->bindValue(':id_location', $formData['id_location']);
-            $stmt->execute();
-            print_r($dbDate);
-            $stmt = $this->db->prepare("SELECT id_meeting FROM meeting WHERE (id_location=:id_location, start=:start, duration=:duration, description=:description)");
-            $stmt->bindValue(':start', $formData['start']);
-            $stmt->bindValue(':description', $formData['description']);
-            $stmt->bindValue(':duration', $formData['duration']);
-            $stmt->bindValue(':id_location', $formData['id_location']);
-            $stmt->execute();
-            print_r("chciumrit");
-            #$this->db->commit();
-
-            foreach ($_POST['people'] as $person) {
-
-            }
-        } catch (PDOexception $e) {
-            $tplVars['message'] = 'Error occured';
-            $this->logger->error($e->getMessage());
-            #$this->db->rollback();
-        }
-
-
-    //$this->view->render($response, 'newMeeting.latte', $tplVars);
-    $basePath = $request->getUri()->getBasePath();
-    //return $response->withRedirect($basePath."/meetings");
-});
-/*$app->get('/meeting', function (Request $request, Response $response, $args) {
-    $stmt = $this->db->query('SELECT * FROM location ORDER BY city'); # toto vrati len DB objekt, nie vysledok!
-    $tplVars['location_list'] = $stmt->fetchall(); # [ ['id_person' => 1, 'first_name' => 'Alice' ... ], ['id_person' => 2, 'first_name' => 'Bob' ... ] . ]
-    return $this->view->render($response, 'persons.latte', $tplVars);
-});*/
-
-$app->post('/meeting/delete', function (Request $request, Response $response, $args) {
-    $id_meeting = $request->getQueryParam('id_meeting');
     try {
-        $stmt = $this->db->prepare('DELETE FROM meeting WHERE id_meeting = :id_meeting');
-        $stmt->bindValue(':id_meeting', $id_meeting);
+        $stmt = $this->db->prepare("INSERT INTO meeting (start, description, duration, id_location) VALUES (:start, :description, :duration, :id_location)");
+        $stmt->bindValue(':start', $dbDate);
+        $stmt->bindValue(':description', $formData['description']);
+        $stmt->bindValue(':duration', $formData['duration']);
+        $stmt->bindValue(':id_location', $formData['id_location']);
         $stmt->execute();
+        $stmt = $this->db->prepare("SELECT id_meeting FROM meeting WHERE (id_location=:id_location AND start=:start AND duration=:duration AND description=:description)");
+        $stmt->bindValue(':start', $dbDate);
+        $stmt->bindValue(':description', $formData['description']);
+        $stmt->bindValue(':duration', $formData['duration']);
+        $stmt->bindValue(':id_location', $formData['id_location']);
+        $stmt->execute();
+        $tplVars["id_meeting"] = $stmt->fetch();
+        foreach ($temp as $person) {
+            $stmt = $this->db->prepare("INSERT INTO person_meeting (id_meeting, id_person) VALUES (:id_meeting, :id_person)");
+            $stmt->bindValue(':id_meeting', $tplVars["id_meeting"]['id_meeting']);
+            $stmt->bindValue(':id_person', $person);
+            $stmt->execute();
+        }
     } catch (PDOexception $e) {
+        $tplVars['message'] = 'Error occured';
         $this->logger->error($e->getMessage());
-        exit('error occured');
     }
-
     $basePath = $request->getUri()->getBasePath();
     return $response->withRedirect($basePath."/meetings");
-})->setName('meeting_delete');
+});
 
-
+/*INFO Meeting vypis*/
 $app->get('/meeting/info', function (Request $request, Response $response, $args) {
     $id_meeting = $request->getQueryParam('id_meeting');
     try {
@@ -484,3 +402,67 @@ $app->get('/meeting/info', function (Request $request, Response $response, $args
 })->setName("infoMeeting");
 
 
+
+// UPDATE MEETING nacteni formulare
+$app->get('/meeting/update', function (Request $request, Response $response, $args) {
+    $params = $request->getQueryParams();
+    if (!empty($params['id_meeting'])){
+        $stmt = $this->db->prepare("SELECT * FROM meeting INNER JOIN location USING (id_location) WHERE id_meeting = :id_meeting");
+        $stmt->bindValue(":id_meeting", $params['id_meeting']);
+        $stmt->execute();
+        $tplVars["formData"] = $stmt->fetch();
+
+        $stmt = $this->db->query('SELECT * FROM location INNER JOIN person USING (id_location)');
+        $stmt->execute();
+        $tplVars['location_list'] = $stmt->fetchall();
+        if (empty($tplVars["formData"])){
+            exit("Meeting not found");
+        } else {
+            return $this->view->render($response, 'updateMeeting.latte', $tplVars);
+        }
+    }
+})->setName("updateMeeting");
+
+// UPDATE MEETING prace s formularem
+$app->post("/meeting/update", function (Request $request, Response $response, $args){
+    $formData = $request->getParsedBody();
+    print_r($formData);
+    $dbDate = date('Y-m-d H:i:s', strtotime($_POST["start"]));
+    try {
+        $stmt = $this->db->prepare("UPDATE meeting SET  start=:start,
+														description = :description,
+														duration = :duration, 
+														id_location = :id_location 
+                                    WHERE id_meeting = :id_meeting");
+        $stmt->bindValue(":start", $dbDate);
+        $stmt->bindValue(":id_meeting",$formData["id_meeting"]);
+        $stmt->bindValue(":description", $formData["description"]);
+        $stmt->bindValue(":duration", $formData["duration"]);
+        $stmt->bindValue(":id_location", $formData["id_location"]);
+        $stmt->execute();
+    } catch (PDOexception $e) {
+        $tplVars['message'] = 'Error occured in updatemeeting';
+    }
+    $basePath = $request->getUri()->getBasePath();
+    return $response->withRedirect($basePath."/meetings");
+});
+
+
+
+
+
+/*DELETE Meeting*/
+$app->post('/meeting/delete', function (Request $request, Response $response, $args) {
+    $id_meeting = $request->getQueryParam('id_meeting');
+    try {
+        $stmt = $this->db->prepare('DELETE FROM meeting WHERE id_meeting = :id_meeting');
+        $stmt->bindValue(':id_meeting', $id_meeting);
+        $stmt->execute();
+    } catch (PDOexception $e) {
+        $this->logger->error($e->getMessage());
+        exit('Error occured in DELETE Meeting');
+    }
+
+    $basePath = $request->getUri()->getBasePath();
+    return $response->withRedirect($basePath."/meetings");
+})->setName('meeting_delete');

@@ -1,22 +1,25 @@
 {block menu}
-	<nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light nav-fill">
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
 
-		<div class="collapse navbar-collapse d-flex justify-content-center" id="navbarTogglerDemo03">
-			<ul class="navbar-nav mr-auto mt-2 mt-lg-0 d-flex justify-content-center">
-				<li class="nav-item better-nav">
-					<a class="nav-link" href="{$basePath}">Home</a>
+	<nav class="navbar navbar-expand-md navbar-dark p-0">
+		<div class="d-flex w-50 order-0 p-3">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+		</div>
+		<div class="navbar-collapse collapse justify-content-center order-2" id="collapsingNavbar">
+			<ul class="navbar-nav better-nav pl-4">
+				<li class="nav-item">
+					<a class="nav-link p-3" href="{$basePath}/">Home</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="{$basePath}/persons">Person list</a>
+					<a class="nav-link p-3" href="{$basePath}/persons">Person&nbsp;list</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="{$basePath}/meetings">Meetings</a>
+					<a class="nav-link p-3" href="{$basePath}/meetings">Meetings</a>
 				</li>
 			</ul>
 		</div>
+		<span class="navbar-text small text-truncate mt-1 w-50 text-right order-1 order-md-last"></span>
 	</nav>
 
 

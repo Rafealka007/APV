@@ -1,17 +1,21 @@
-
 nav {
   background-color: #14213d;
   font-size: 22px;
   font-weight: bold;
 }
 .nav-link {
-  color: white;
+  color: black;
 }
 .better-nav .nav-item:hover {
   background: #f4d35e;
   color: black;
 }
-.nav-item a:hover {
+
+.better-nav .nav-item:hover .nav-link{
+  color: black;
+}
+
+.better-nav .nav-item a:hover {
   color: black;
 }
 
@@ -21,6 +25,10 @@ nav {
 .certain-w {
   width: 100%;
   height: 200px;
+}
+
+.bg-dark {
+  background: none;
 }
 
 .center-align{

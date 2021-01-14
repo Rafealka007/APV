@@ -4,7 +4,54 @@
 
 {block body}
     <div class="container">
-        <h1>New person</h1>
-        {include person-form.latte, buttonTitle => "Edit"}
+        <div class="container">
+            <h3 class="text-center pb-4 pt-3">Update meeting</h3>
+            <form action="{link updateMeeting}" method="post">
+                <div class="form-row justify-content-center">
+                    <div class="col-sm-3 form-group">
+                        <label for="start">Date</label>
+                        <input class="form-control" type="datetime-local" name="start" placeholder="start" required>
+                    </div>
+                    <div class="col-sm-3 form-group">
+                        <label for="scroll">Location</label>
+                        <select name="id_location" class="form-control" id="scroll">
+                            <option value={$formData['id_location']}><span>{$formData['city']}</span><span>, </span><span>{$formData['street_name']}</span><span> </span><span>{$formData['street_number']}</span></option>
+                            {foreach $location_list as $l}
+                                <option value={$l['id_location']}><span>{$l['city']}</span><span>, </span><span>{$l['street_name']}</span><span> </span><span>{$l['street_number']}</span></option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row justify-content-center">
+                    <div class="col-sm-3 form-group">
+                        <label for="description">Description</label>
+                        <input class="form-control" type="text" name="description" placeholder="description" value="{$formData['description']}" required>
+                    </div>
+                    <div class="col-sm-3 form-group">
+                        <label for="duration">Duration</label>
+                        <input class="form-control" type="time" name="duration" placeholder="Duration" value="{$formData['duration']}">
+                    </div>
+                </div>
+                <div class="form-row justify-content-center">
+                    <div class="col-5 form-group">
+                        <label for="people">Attending people (multiple choice)</label>
+                        <select name="people[]" id="people" class="certain-w" multiple>
+                            {foreach $location_list as $l}
+                                <option value={$l['id_person']}><span>{$l['first_name']}</span><span> </span><span>{$l['last_name']}</span></option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <input class="form-control" type="hidden" name="id_meeting" placeholder="id_meeting" value="{$formData['id_meeting']}">
+                </div>
+                <br>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success">
+                        <span class="fa fa-plus"></span> Edit
+                    </button>
+                </div>
+            </form>
+            {$temp}
+        </div>
     </div>
 {/block}
