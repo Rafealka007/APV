@@ -10,7 +10,7 @@
                 <div class="form-row justify-content-center">
                     <div class="col-sm-3 form-group">
                         <label for="start">Date</label>
-                        <input class="form-control" type="datetime-local" name="start" placeholder="start" required>
+                        <input class="form-control" id="start" type="datetime-local" name="start" placeholder="start" required>
                     </div>
                     <div class="col-sm-3 form-group">
                         <label for="scroll">Location</label>
@@ -26,11 +26,11 @@
                 <div class="form-row justify-content-center">
                     <div class="col-sm-3 form-group">
                         <label for="description">Description</label>
-                        <input class="form-control" type="text" name="description" placeholder="description" value="{$formData['description']}" required>
+                        <input class="form-control" id="description" type="text" name="description" placeholder="description" value="{$formData['description']}" required>
                     </div>
                     <div class="col-sm-3 form-group">
                         <label for="duration">Duration</label>
-                        <input class="form-control" type="time" name="duration" placeholder="Duration" value="{$formData['duration']}">
+                        <input class="form-control" id="duration" type="time" name="duration" placeholder="Duration" value="{$formData['duration']}">
                     </div>
                 </div>
                 <div class="form-row justify-content-center">
