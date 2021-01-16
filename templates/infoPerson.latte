@@ -126,9 +126,10 @@
                 <div class="container row justify-content-center p-0 m-0">
                     <div class="col row text-left">
                         {foreach $relation as $c}
-                            <div class="col-4 pt-2 pb-2"><span>{$c['name']}</span></div>
+                            <div class="col-3 pt-2 pb-2"><span>{$c['name']}</span></div>
                             <div class="col-5 pt-2 pb-2"><span>{$c['friend_first_name']}</span><span>&nbsp;</span><span>{$c['friend_last_name']}</span></div>
-                            <div class="col-3 text-center align-self-center">
+                            <div class="col-2 pt-2 pb-2">{$c['description']}</div>
+                            <div class="col-2 text-center align-self-center">
                                 <form method="post" action="{link removeRelation}?id_relation={$c['id_relation']}">
                                     <input type="hidden" id="id_person" name="id_person" value={$person[0]['id_person']}>
                                     <button class="btn btn-danger p-1">
@@ -141,8 +142,9 @@
                         {/foreach}
                         {foreach $relation2 as $c}
                             <div class="col-3 pt-2 pb-2"><span>{$c['name']}</span></div>
-                            <div class="col-6 pt-2 pb-2"><span>{$c['friend_first_name']}</span><span>&nbsp;</span><span>{$c['friend_last_name']}</span></div>
-                            <div class="col-3 text-center align-self-center">
+                            <div class="col-5 pt-2 pb-2"><span>{$c['friend_first_name']}</span><span>&nbsp;</span><span>{$c['friend_last_name']}</span></div>
+                            <div class="col-2 pt-2 pb-2">{$c['description']}</div>
+                            <div class="col-2 text-center align-self-center">
                                 <form method="post" action="{link removeRelation}?id_relation={$c['id_relation']}">
                                     <input type="hidden" id="id_person" name="id_person" value={$person[0]['id_person']}>
                                     <button class="btn btn-danger p-1">
